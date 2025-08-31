@@ -17,7 +17,6 @@ target_include_directories(${PROJECT_NAME}
   ${CMAKE_CURRENT_LIST_DIR}/
   ${CMAKE_CURRENT_LIST_DIR}/third_party/ruy
   ${CMAKE_CURRENT_LIST_DIR}/third_party/gemmlowp
-  ${CMAKE_CURRENT_LIST_DIR}/third_party/kissfft
   ${CMAKE_CURRENT_LIST_DIR}/third_party/flatbuffers/include
   ${CMAKE_CURRENT_LIST_DIR}/third_party/CMSIS_5/CMSIS/Core/Include
   ${CMAKE_CURRENT_LIST_DIR}/third_party/CMSIS_5/CMSIS/Core/
