@@ -15,13 +15,17 @@ limitations under the License.
 
 #include "constants.h"
 #include "hello_world_float_model_data.h"
+#include "hello_world_int8_model_data.h"
 #include "main_functions.h"
 #include "output_handler.h"
+
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/micro_log.h"
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
 #include "tensorflow/lite/micro/system_setup.h"
 #include "tensorflow/lite/schema/schema_generated.h"
+
+#include "pico/stdlib.h"
 
 // Globals, used for compatibility with Arduino-style sketches.
 namespace {
@@ -41,7 +45,7 @@ void setup() {
 
   // Map the model into a usable data structure. This doesn't involve any
   // copying or parsing, it's a very lightweight operation.
-  model = tflite::GetModel(g_hello_world_float_model_data);
+  model = tflite::GetModel(g_hello_world_int8_model_data);
   if (model->version() != TFLITE_SCHEMA_VERSION) {
     MicroPrintf(
         "Model provided is schema version %d not equal "
