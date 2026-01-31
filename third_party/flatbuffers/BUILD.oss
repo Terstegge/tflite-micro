@@ -1,3 +1,5 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+load("@rules_python//python:defs.bzl", "py_library")
 load(":build_defs.bzl", "flatbuffer_py_strip_prefix_srcs")
 
 package(default_visibility = ["//visibility:public"])
@@ -8,20 +10,18 @@ exports_files(["LICENSE"])
 
 config_setting(
     name = "platform_freebsd",
-    values = {"cpu": "freebsd"},
+    constraint_values = ["@platforms//os:freebsd"],
 )
 
 config_setting(
     name = "platform_openbsd",
-    values = {"cpu": "openbsd"},
+    constraint_values = ["@platforms//os:openbsd"],
 )
 
 config_setting(
     name = "windows",
-    values = {"cpu": "x64_windows"},
+    constraint_values = ["@platforms//os:windows"],
 )
-
-load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
 
 # Public flatc library to compile flatbuffer files at runtime.
 cc_library(

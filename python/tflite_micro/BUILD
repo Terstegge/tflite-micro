@@ -1,18 +1,20 @@
 load("@bazel_skylib//rules:common_settings.bzl", "string_flag")
-load("@rules_python//python:defs.bzl", "py_library", "py_test")
 load("@pybind11_bazel//:build_defs.bzl", "pybind_extension")
-load("//python:py_namespace.bzl", "py_namespace")
-load("//tools:expand_stamp_vars.bzl", "expand_stamp_vars")
+load("@rules_python//python:defs.bzl", "py_library", "py_test")
 load("@rules_python//python:packaging.bzl", "py_package", "py_wheel")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("@tflm_pip_deps//:requirements.bzl", "requirement")
-load(
-    "//tensorflow/lite/micro:build_def.bzl",
-    "tflm_cc_library",
-)
+load("//python:py_namespace.bzl", "py_namespace")
 load(
     "//tensorflow:extra_rules.bzl",
     "tflm_python_op_resolver_friends",
 )
+load(
+    "//tensorflow/lite/micro:build_def.bzl",
+    "INCOMPATIBLE_WITH_WINDOWS",
+    "tflm_cc_library",
+)
+load("//tools:expand_stamp_vars.bzl", "expand_stamp_vars")
 
 package(
     features = ["-layering_check"],
@@ -59,6 +61,7 @@ pybind_extension(
         "python_utils.h",
         "shared_library.h",
     ],
+    target_compatible_with = INCOMPATIBLE_WITH_WINDOWS,
     deps = [
         ":python_ops_resolver",
         "//tensorflow/lite/micro:micro_framework",
@@ -74,6 +77,7 @@ py_library(
         "runtime.py",
     ],
     data = [":_runtime.so"],
+    target_compatible_with = INCOMPATIBLE_WITH_WINDOWS,
     visibility = ["//visibility:public"],
     deps = [
         requirement("numpy"),
@@ -90,6 +94,7 @@ py_test(
         "nomsan",  # Python doesn't like these symbols in _runtime.so
         "noubsan",
     ],
+    target_compatible_with = INCOMPATIBLE_WITH_WINDOWS,
     deps = [
         ":runtime",
         requirement("numpy"),
@@ -109,6 +114,7 @@ py_test(
     ],
     # Only compatible when compression is NOT enabled
     target_compatible_with = select({
+        "@platforms//os:windows": ["@platforms//:incompatible"],
         "//:with_compression_enabled": ["@platforms//:incompatible"],
         "//conditions:default": [],
     }),
@@ -153,6 +159,7 @@ py_package(
     packages = [
         "python.tflite_micro",
         "tensorflow.lite.micro.compression",
+        "tensorflow.lite.micro.tools",
         "tensorflow.lite.micro.tools.generate_test_for_model",
         "tensorflow.lite.python",
         "tensorflow.lite.tools.flatbuffer_utils",
@@ -162,6 +169,7 @@ py_package(
         ":runtime",
         ":version",
         "//tensorflow/lite/micro/compression",
+        "//tensorflow/lite/micro/tools:tflite_flatbuffer_align",
     ],
 )
 
@@ -198,6 +206,8 @@ string_flag(
     values = [
         "cp310_cp310_manylinux_2_28_x86_64",
         "cp311_cp311_manylinux_2_28_x86_64",
+        "cp312_cp312_manylinux_2_28_x86_64",
+        "cp313_cp313_manylinux_2_28_x86_64",
         "local",
     ],
 )
@@ -217,6 +227,20 @@ config_setting(
 )
 
 config_setting(
+    name = "cp312_cp312_manylinux_2_28_x86_64",
+    flag_values = {
+        ":compatibility_tag": "cp312_cp312_manylinux_2_28_x86_64",
+    },
+)
+
+config_setting(
+    name = "cp313_cp313_manylinux_2_28_x86_64",
+    flag_values = {
+        ":compatibility_tag": "cp313_cp313_manylinux_2_28_x86_64",
+    },
+)
+
+config_setting(
     name = "local",
     flag_values = {
         ":compatibility_tag": "local",
@@ -232,6 +256,8 @@ py_wheel(
     abi = select({
         ":cp310_cp310_manylinux_2_28_x86_64": "cp310",
         ":cp311_cp311_manylinux_2_28_x86_64": "cp311",
+        ":cp312_cp312_manylinux_2_28_x86_64": "cp312",
+        ":cp313_cp313_manylinux_2_28_x86_64": "cp313",
         ":local": "none",
     }),
     description_file = ":description_file",
@@ -239,11 +265,15 @@ py_wheel(
     platform = select({
         ":cp310_cp310_manylinux_2_28_x86_64": "manylinux_2_28_x86_64",
         ":cp311_cp311_manylinux_2_28_x86_64": "manylinux_2_28_x86_64",
+        ":cp312_cp312_manylinux_2_28_x86_64": "manylinux_2_28_x86_64",
+        ":cp313_cp313_manylinux_2_28_x86_64": "manylinux_2_28_x86_64",
         ":local": "any",
     }),
     python_tag = select({
         ":cp310_cp310_manylinux_2_28_x86_64": "cp310",
         ":cp311_cp311_manylinux_2_28_x86_64": "cp311",
+        ":cp312_cp312_manylinux_2_28_x86_64": "cp312",
+        ":cp313_cp313_manylinux_2_28_x86_64": "cp313",
         ":local": "py3",
     }),
     requires = [
@@ -281,4 +311,5 @@ sh_test(
         "notap",  # See http://b/294278650#comment4 for more details.
         "noubsan",
     ],
+    target_compatible_with = INCOMPATIBLE_WITH_WINDOWS,
 )

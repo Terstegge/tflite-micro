@@ -29,7 +29,7 @@ jobs:
   pypi-build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
         with:
           token: ${{ secrets.TFLM_BOT_REPO_TOKEN }}
       - name: Build Wheel 3.10
@@ -38,6 +38,12 @@ jobs:
       - name: Build Wheel 3.11
         run: |
           python/tflite_micro/pypi_build.sh cp311
+      - name: Build Wheel 3.12
+        run: |
+          python/tflite_micro/pypi_build.sh cp312
+      - name: Build Wheel 3.13
+        run: |
+          python/tflite_micro/pypi_build.sh cp313
       - name: Check Directory Output
         run: |
           ls -l bazel-pypi-out
