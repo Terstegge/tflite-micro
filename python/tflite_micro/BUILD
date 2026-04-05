@@ -2,7 +2,7 @@ load("@bazel_skylib//rules:common_settings.bzl", "string_flag")
 load("@pybind11_bazel//:build_defs.bzl", "pybind_extension")
 load("@rules_python//python:defs.bzl", "py_library", "py_test")
 load("@rules_python//python:packaging.bzl", "py_package", "py_wheel")
-load("@rules_shell//shell:sh_test.bzl", "sh_test")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")  # @unused
 load("@tflm_pip_deps//:requirements.bzl", "requirement")
 load("//python:py_namespace.bzl", "py_namespace")
 load(
@@ -67,7 +67,7 @@ pybind_extension(
         "//tensorflow/lite/micro:micro_framework",
         "//tensorflow/lite/micro:op_resolvers",
         "//tensorflow/lite/micro:recording_allocators",
-        "@numpy_cc_deps//:cc_headers",
+        "@tflm_pip_deps//numpy:cc_headers",
     ],
 )
 
@@ -76,10 +76,13 @@ py_library(
     srcs = [
         "runtime.py",
     ],
-    data = [":_runtime.so"],
+    data = [
+        ":_runtime.so",
+    ],
     target_compatible_with = INCOMPATIBLE_WITH_WINDOWS,
     visibility = ["//visibility:public"],
     deps = [
+        "//:tflite_micro_shim",
         requirement("numpy"),
         "//tensorflow/lite/micro/tools:generate_test_for_model",
         "//tensorflow/lite/tools:flatbuffer_utils",
@@ -301,9 +304,18 @@ sh_test(
     ],
     args = [
         "$(location :whl)",
-    ],
+    ] + select({
+        "@rules_python//python/config_settings:is_python_3.10": ["$(location @python_3_10//:bin/python3)"],
+        "@rules_python//python/config_settings:is_python_3.11": ["$(location @python_3_11//:bin/python3)"],
+        "@rules_python//python/config_settings:is_python_3.12": ["$(location @python_3_12//:bin/python3)"],
+        "@rules_python//python/config_settings:is_python_3.13": ["$(location @python_3_13//:bin/python3)"],
+    }),
     data = [
         ":whl",
+        "@python_3_10//:bin/python3",
+        "@python_3_11//:bin/python3",
+        "@python_3_12//:bin/python3",
+        "@python_3_13//:bin/python3",
     ],
     tags = [
         "noasan",

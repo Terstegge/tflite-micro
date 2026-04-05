@@ -10,6 +10,10 @@ on:
   # Allow manually triggering of the workflow.
   workflow_dispatch: {}
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   call-suite-xtensa:
     uses: ./.github/workflows/suite_xtensa.yml
@@ -31,6 +35,6 @@ jobs:
       workflow: ${{ github.workflow }}
       run_id: ${{ github.run_id }}
       run_number: ${{ github.run_number }}
-      flag_label: ci:bot_issue
+      flag_label: bot:issue
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}

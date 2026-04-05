@@ -9,7 +9,10 @@ on:
 
 jobs:
   bazel_tests:
-    runs-on: ubuntu-latest
+    runs-on: linux-x86-n2-16
+    timeout-minutes: 60
+    container:
+      image: ghcr.io/tflm-bot/tflm-ci:0.6.7
     strategy:
       fail-fast: false
       matrix:
@@ -20,49 +23,22 @@ jobs:
             script: test_bazel_with_compression.sh
           - name: Bazel msan
             script: test_bazel_msan.sh
-            needs-mmap-rnd: true
           - name: Bazel with Compression [msan]
             script: test_bazel_with_compression_msan.sh
-            needs-mmap-rnd: true
           - name: Bazel asan
             script: test_bazel_asan.sh
-            needs-mmap-rnd: true
           - name: Bazel with Compression [asan]
             script: test_bazel_with_compression_asan.sh
-            needs-mmap-rnd: true
-
     name: ${{ matrix.name }}
     steps:
-      - uses: jlumbroso/free-disk-space@v1.3.1
-        with:
-          android: true
-          dotnet: true
-          haskell: true
-          docker-images: true
-          large-packages: false
-          tool-cache: false
-          swap-storage: false
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.10'
       - uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.trigger-sha }}
+          ref: ${{ inputs.trigger-sha || github.ref }}
       - uses: bazel-contrib/setup-bazel@0.18.0
         with:
           bazelisk-cache: true
           disk-cache: true
+          cache-save: ${{ github.event_name == 'push' }}
           repository-cache: true
-      - name: Install dependencies
-        run: |
-          pip3 install Pillow
-          pip3 install numpy
-      - name: Fix kernel mmap rnd bits
-        if: ${{ matrix.needs-mmap-rnd }}
-        # Asan in llvm 14 provided in ubuntu 22.04 is incompatible with
-        # high-entropy ASLR in much newer kernels that GitHub runners are
-        # using leading to random crashes: https://reviews.llvm.org/D148280
-        run: sudo sysctl vm.mmap_rnd_bits=28
       - name: Test
-        run: |
-          tensorflow/lite/micro/tools/ci_build/${{ matrix.script }}
+        run: tensorflow/lite/micro/tools/ci_build/${{ matrix.script }}

@@ -10,58 +10,55 @@ on:
 jobs:
   check_code_style:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
 
     name: Code Style
+    container:
+      image: ghcr.io/tflm-bot/tflm-ci:0.6.7
     steps:
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.10'
       - uses: actions/checkout@v6
         with:
           ref: ${{ inputs.trigger-sha }}
       - name: Check
-        uses: docker://ghcr.io/tflm-bot/tflm-ci:0.6.5
-        with:
-          args: /bin/sh -c "git config --global --add safe.directory /github/workspace && tensorflow/lite/micro/tools/ci_build/test_code_style.sh"
+        run: tensorflow/lite/micro/tools/ci_build/test_code_style.sh
 
   cpp_build_warnings:
-    runs-on: ubuntu-latest
-
+    runs-on: linux-x86-n2-16
+    timeout-minutes: 60
+    container:
+      image: ghcr.io/tflm-bot/tflm-ci:0.6.7
     name: C++ Build Warnings
     steps:
-      - uses: jlumbroso/free-disk-space@v1.3.1
-        with:
-          android: true
-          dotnet: true
-          haskell: true
-          docker-images: true
-          large-packages: false
-          tool-cache: false
-          swap-storage: false    
       - uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.trigger-sha }}
-      - name: Build with Warnings as Errors
-        uses: docker://ghcr.io/tflm-bot/tflm-ci:0.6.5
+          ref: ${{ inputs.trigger-sha || github.ref }}
+      - uses: bazel-contrib/setup-bazel@0.18.0
         with:
-          args: bazel build --copt="-Werror" //...
+          bazelisk-cache: true
+          disk-cache: true
+          cache-save: ${{ github.event_name == 'push' }}
+          repository-cache: true
+      - name: Build with Warnings as Errors
+        run: bazel build --copt="-Werror" //...
 
   project_generation:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
 
     name: Project Generation
+    container:
+      image: ghcr.io/tflm-bot/tflm-ci:0.6.7
     steps:
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.10'
       - uses: actions/checkout@v6
         with:
           ref: ${{ inputs.trigger-sha }}
-      - name: Install dependencies
-        run: |
-          pip3 install Pillow
-          pip3 install numpy
+      - uses: bazel-contrib/setup-bazel@0.18.0
+        with:
+          bazelisk-cache: true
+          disk-cache: true
+          cache-save: ${{ github.event_name == 'push' }}
+          repository-cache: true
       - name: Test
         run: |
-          cd ../
+          cd ..
           tflite-micro/tensorflow/lite/micro/tools/ci_build/test_project_generation.sh tflite-micro/
