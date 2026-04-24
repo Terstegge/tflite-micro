@@ -1,10 +1,30 @@
 
 cmake_minimum_required(VERSION 3.12)
 
-project(hello_world C CXX ASM)
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  # Specify the target board 
+  set(PICO_BOARD pico2)
+  if(DEFINED PICO_SDK_PATH AND EXISTS "${PICO_SDK_PATH}/external/pico_sdk_import.cmake")
+      include("${PICO_SDK_PATH}/external/pico_sdk_import.cmake")
+  elseif(DEFINED ENV{PICO_SDK_PATH} AND EXISTS "$ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake")
+      include("$ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake")
+  else()
+      include("${CMAKE_CURRENT_LIST_DIR}/pico_sdk_import.cmake")
+  endif()
+endif()
+
+project(hello_world C CXX ASM)
+
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  # Initialize the Pico SDK
+  pico_sdk_init()
+  add_subdirectory(${TFLITE_MICRO_PATH} ${CMAKE_CURRENT_BINARY_DIR}/tflite-micro)
+endif()
 
 add_executable(hello_world_test "")
 
@@ -13,14 +33,15 @@ target_include_directories(hello_world_test
   ${CMAKE_CURRENT_LIST_DIR}/.
 )
 
-set_target_properties(
-  hello_world_test
-  PROPERTIES
-  COMPILE_FLAGS -fno-rtti
-  COMPILE_FLAGS -fno-exceptions
-  COMPILE_FLAGS -fno-threadsafe-statics
-  COMPILE_FLAGS -nostdlib
-) 
+target_compile_options(hello_world_test PUBLIC 
+  -Os 
+  -fno-exceptions 
+  -nostdlib 
+  $<$<COMPILE_LANGUAGE:CXX>:
+      -fno-rtti
+      -fno-threadsafe-statics
+  >
+)
 
 target_sources(hello_world_test
   PRIVATE
@@ -31,7 +52,7 @@ target_sources(hello_world_test
 
 target_link_libraries(
   hello_world_test
-  tflite-micro
+  tflite-micro-pi-port
   hardware_pwm
 )
 
@@ -48,13 +69,14 @@ target_include_directories(hello_world
   ${CMAKE_CURRENT_LIST_DIR}/.
 )
 
-set_target_properties(
-  hello_world
-  PROPERTIES
-  COMPILE_FLAGS -fno-rtti
-  COMPILE_FLAGS -fno-exceptions
-  COMPILE_FLAGS -fno-threadsafe-statics
-  COMPILE_FLAGS -nostdlib
+target_compile_options(hello_world PUBLIC 
+  -Os 
+  -fno-exceptions 
+  -nostdlib 
+  $<$<COMPILE_LANGUAGE:CXX>:
+      -fno-rtti
+      -fno-threadsafe-statics
+  >
 )
 
 target_sources(hello_world
@@ -71,9 +93,9 @@ target_sources(hello_world
 )
 
 target_link_libraries(
-  hello_world
-  tflite-micro
+  hello_world PRIVATE
   hardware_pwm
+  tflite-micro-pi-port
 )
 
 pico_enable_stdio_usb(hello_world 1)
@@ -89,15 +111,15 @@ target_include_directories(output_handler_test
   ${CMAKE_CURRENT_LIST_DIR}/.
 )
 
-set_target_properties(
-  output_handler_test
-  PROPERTIES
-  COMPILE_FLAGS -fno-rtti
-  COMPILE_FLAGS -fno-exceptions
-  COMPILE_FLAGS -fno-threadsafe-statics
-  COMPILE_FLAGS -nostdlib
+target_compile_options(output_handler_test PUBLIC 
+  -Os 
+  -fno-exceptions 
+  -nostdlib 
+  $<$<COMPILE_LANGUAGE:CXX>:
+      -fno-rtti
+      -fno-threadsafe-statics
+  >
 )
-
 target_sources(output_handler_test
   PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}/output_handler_test.cpp
@@ -108,7 +130,7 @@ target_sources(output_handler_test
 
 target_link_libraries(
   output_handler_test
-  tflite-micro
+  tflite-micro-pi-port
   hardware_pwm
 )
 

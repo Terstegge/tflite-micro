@@ -268,7 +268,7 @@ set(TFLITE_MICRO_SOURCE_FILES
                         ${CMAKE_CURRENT_LIST_DIR}/tensorflow/lite/micro/benchmarks/micro_benchmark.h
                         ${CMAKE_CURRENT_LIST_DIR}/tensorflow/lite/micro/compatibility.h
                         ${CMAKE_CURRENT_LIST_DIR}/tensorflow/lite/micro/compression.h
-                        ${CMAKE_CURRENT_LIST_DIR}/tensorflow/lite/micro/debug_log.cc
+                        # ${CMAKE_CURRENT_LIST_DIR}/tensorflow/lite/micro/debug_log.cc
                         ${CMAKE_CURRENT_LIST_DIR}/tensorflow/lite/micro/debug_log.h
                         ${CMAKE_CURRENT_LIST_DIR}/tensorflow/lite/micro/fake_micro_context.cc
                         ${CMAKE_CURRENT_LIST_DIR}/tensorflow/lite/micro/fake_micro_context.h
@@ -447,7 +447,7 @@ set(TFLITE_MICRO_SOURCE_FILES
                         ${CMAKE_CURRENT_LIST_DIR}/tensorflow/lite/micro/micro_profiler_interface.h
                         ${CMAKE_CURRENT_LIST_DIR}/tensorflow/lite/micro/micro_resource_variable.cc
                         ${CMAKE_CURRENT_LIST_DIR}/tensorflow/lite/micro/micro_resource_variable.h
-                        ${CMAKE_CURRENT_LIST_DIR}/tensorflow/lite/micro/micro_time.cc
+                        # ${CMAKE_CURRENT_LIST_DIR}/tensorflow/lite/micro/micro_time.cc
                         ${CMAKE_CURRENT_LIST_DIR}/tensorflow/lite/micro/micro_time.h
                         ${CMAKE_CURRENT_LIST_DIR}/tensorflow/lite/micro/micro_utils.cc
                         ${CMAKE_CURRENT_LIST_DIR}/tensorflow/lite/micro/micro_utils.h

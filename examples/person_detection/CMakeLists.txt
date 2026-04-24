@@ -1,10 +1,29 @@
 
 cmake_minimum_required(VERSION 3.12)
 
-project(person_detection C CXX ASM)
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  # Specify the target board 
+  set(PICO_BOARD pico2)
+  if(DEFINED PICO_SDK_PATH AND EXISTS "${PICO_SDK_PATH}/external/pico_sdk_import.cmake")
+      include("${PICO_SDK_PATH}/external/pico_sdk_import.cmake")
+  elseif(DEFINED ENV{PICO_SDK_PATH} AND EXISTS "$ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake")
+      include("$ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake")
+  else()
+      include("${CMAKE_CURRENT_LIST_DIR}/pico_sdk_import.cmake")
+  endif()
+endif()
+
+
+project(person_detection C CXX ASM)
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  # Initialize the Pico SDK
+  pico_sdk_init()
+  add_subdirectory(${TFLITE_MICRO_PATH} ${CMAKE_CURRENT_BINARY_DIR}/tflite-micro)
+endif()
 
 add_executable(detection_responder_test "")
 
@@ -13,13 +32,14 @@ target_include_directories(detection_responder_test
   ${CMAKE_CURRENT_LIST_DIR}/.
 )
 
-set_target_properties(
-  detection_responder_test
-  PROPERTIES
-  COMPILE_FLAGS -fno-rtti
-  COMPILE_FLAGS -fno-exceptions
-  COMPILE_FLAGS -fno-threadsafe-statics
-  COMPILE_FLAGS -nostdlib
+target_compile_options(detection_responder_test PUBLIC 
+  -Os 
+  -fno-exceptions 
+  -nostdlib 
+  $<$<COMPILE_LANGUAGE:CXX>:
+      -fno-rtti
+      -fno-threadsafe-statics
+  >
 )
 
 target_sources(detection_responder_test
@@ -31,7 +51,7 @@ target_sources(detection_responder_test
 
 target_link_libraries(
   detection_responder_test
-  tflite-micro
+  tflite-micro-pi-port
   hardware_pwm
 )
 
@@ -48,13 +68,14 @@ target_include_directories(person_detection_benchmark
   ${CMAKE_CURRENT_LIST_DIR}/.
 )
 
-set_target_properties(
-  person_detection_benchmark
-  PROPERTIES
-  COMPILE_FLAGS -fno-rtti
-  COMPILE_FLAGS -fno-exceptions
-  COMPILE_FLAGS -fno-threadsafe-statics
-  COMPILE_FLAGS -nostdlib
+target_compile_options(person_detection_benchmark PUBLIC 
+  -Os 
+  -fno-exceptions 
+  -nostdlib 
+  $<$<COMPILE_LANGUAGE:CXX>:
+      -fno-rtti
+      -fno-threadsafe-statics
+  >
 )
 
 target_sources(person_detection_benchmark
@@ -68,7 +89,7 @@ target_sources(person_detection_benchmark
 
 target_link_libraries(
   person_detection_benchmark
-  tflite-micro
+  tflite-micro-pi-port
   hardware_pwm
 )
 
@@ -85,13 +106,14 @@ target_include_directories(person_detection_test
   ${CMAKE_CURRENT_LIST_DIR}/.
 )
 
-set_target_properties(
-  person_detection_test
-  PROPERTIES
-  COMPILE_FLAGS -fno-rtti
-  COMPILE_FLAGS -fno-exceptions
-  COMPILE_FLAGS -fno-threadsafe-statics
-  COMPILE_FLAGS -nostdlib
+target_compile_options(person_detection_test PUBLIC 
+  -Os 
+  -fno-exceptions 
+  -nostdlib 
+  $<$<COMPILE_LANGUAGE:CXX>:
+      -fno-rtti
+      -fno-threadsafe-statics
+  >
 )
 
 target_sources(person_detection_test
@@ -109,7 +131,7 @@ target_sources(person_detection_test
 
 target_link_libraries(
   person_detection_test
-  tflite-micro
+  tflite-micro-pi-port
   hardware_pwm
 )
 
@@ -126,13 +148,14 @@ target_include_directories(person_detection
   ${CMAKE_CURRENT_LIST_DIR}/.
 )
 
-set_target_properties(
-  person_detection
-  PROPERTIES
-  COMPILE_FLAGS -fno-rtti
-  COMPILE_FLAGS -fno-exceptions
-  COMPILE_FLAGS -fno-threadsafe-statics
-  COMPILE_FLAGS -nostdlib
+target_compile_options(person_detection PUBLIC 
+  -Os 
+  -fno-exceptions 
+  -nostdlib 
+  $<$<COMPILE_LANGUAGE:CXX>:
+      -fno-rtti
+      -fno-threadsafe-statics
+  >
 )
 
 target_sources(person_detection
@@ -152,7 +175,7 @@ target_sources(person_detection
 
 target_link_libraries(
   person_detection
-  tflite-micro
+  tflite-micro-pi-port
   hardware_pwm
 )
 
@@ -169,13 +192,14 @@ target_include_directories(image_provider_test
   ${CMAKE_CURRENT_LIST_DIR}/.
 )
 
-set_target_properties(
-  image_provider_test
-  PROPERTIES
-  COMPILE_FLAGS -fno-rtti
-  COMPILE_FLAGS -fno-exceptions
-  COMPILE_FLAGS -fno-threadsafe-statics
-  COMPILE_FLAGS -nostdlib
+target_compile_options(image_provider_test PUBLIC 
+  -Os 
+  -fno-exceptions 
+  -nostdlib 
+  $<$<COMPILE_LANGUAGE:CXX>:
+      -fno-rtti
+      -fno-threadsafe-statics
+  >
 )
 
 target_sources(image_provider_test
@@ -189,7 +213,7 @@ target_sources(image_provider_test
 
 target_link_libraries(
   image_provider_test
-  tflite-micro
+  tflite-micro-pi-port
   hardware_pwm
 )
 

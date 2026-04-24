@@ -3,7 +3,7 @@ rm -fr ./third_party
 
 mkdir -p ./third_party
 
-git clone --depth 1 https://github.com/google/flatbuffers.git --branch v23.5.26 ./third_party/flatbuffers
+git clone --depth 1 https://github.com/google/flatbuffers.git --branch v25.9.23 ./third_party/flatbuffers
 
 git clone --depth 1 https://github.com/google/ruy.git ./third_party/ruy
 
