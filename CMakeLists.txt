@@ -4,20 +4,7 @@ cmake_minimum_required(VERSION 3.16)
 # name. So combine the target name with the current project name!
 set(TFL_MICRO_TARGET tflite-micro_${PROJECT_NAME})
 
-set(SETUP_MARKER_FILE "${CMAKE_CURRENT_LIST_DIR}/third_party/flatbuffers/LICENSE")
-add_custom_command(
-        OUTPUT  "${SETUP_MARKER_FILE}"
-        COMMAND bash ${CMAKE_CURRENT_LIST_DIR}/setup_pico.sh
-        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-        COMMENT "Initialize tflite-micro Library ..."
-)
-add_custom_target(tflite_setup_deps DEPENDS "${SETUP_MARKER_FILE}")
-
 add_library(${TFL_MICRO_TARGET} INTERFACE)
-
-add_dependencies(${TFL_MICRO_TARGET}
-        tflite_setup_deps
-)
 
 target_compile_options(${TFL_MICRO_TARGET}
         INTERFACE -Os -Wno-unused-parameter
