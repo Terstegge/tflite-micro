@@ -1,6 +1,6 @@
-set(PICO_PORT_FILES 
-                    ${CMAKE_CURRENT_LIST_DIR}/pico_port/micro_time.cpp
-                    ${CMAKE_CURRENT_LIST_DIR}/pico_port/system_setup.cpp
+set(YAHAL_PORT_FILES
+                    ${CMAKE_CURRENT_LIST_DIR}/yahal_port/micro_time.cpp
+                    ${CMAKE_CURRENT_LIST_DIR}/yahal_port/system_setup.cpp
 )
 
 set(CMSIS_SOURCE_FILES 
