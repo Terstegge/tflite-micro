@@ -12,7 +12,7 @@ else()
     if(NOT EXISTS "${SETUP_MARKER_FILE}")
         # Run setup script
         execute_process(
-                COMMAND bash ${CMAKE_CURRENT_LIST_DIR}/setup.sh
+                COMMAND sh ${CMAKE_CURRENT_LIST_DIR}/setup.sh
                 WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
                 RESULT_VARIABLE SCRIPT_ERROR_CODE
         )

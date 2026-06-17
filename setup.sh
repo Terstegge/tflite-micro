@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/sh -xe
 rm -fr ./third_party
 
 mkdir -p ./third_party
