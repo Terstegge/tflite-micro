@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
+include(setup.cmake)
+
 # In multi-binary projects every target has to have a different
 # name. So combine the target name with the current project name!
 set(TFL_MICRO_TARGET tflite-micro_${PROJECT_NAME})
@@ -31,12 +33,12 @@ target_compile_definitions(${TFL_MICRO_TARGET} INTERFACE
 
 target_include_directories(${TFL_MICRO_TARGET} INTERFACE
         ${CMAKE_CURRENT_LIST_DIR}/
-        ${CMAKE_CURRENT_LIST_DIR}/third_party/ruy
-        ${CMAKE_CURRENT_LIST_DIR}/third_party/gemmlowp
-        ${CMAKE_CURRENT_LIST_DIR}/third_party/flatbuffers/include
-        ${CMAKE_CURRENT_LIST_DIR}/third_party/CMSIS_5/CMSIS/Core/Include
-        ${CMAKE_CURRENT_LIST_DIR}/third_party/CMSIS_5/CMSIS/Core/
-        ${CMAKE_CURRENT_LIST_DIR}/third_party/CMSIS-NN/Include
-        ${CMAKE_CURRENT_LIST_DIR}/third_party/CMSIS-NN//
+        ${ruy_SOURCE_DIR}
+        ${gemmlowp_SOURCE_DIR}
+        ${flatbuffers_SOURCE_DIR}/include
+        ${cmsis_5_SOURCE_DIR}/CMSIS/Core/Include
+        ${cmsis_5_SOURCE_DIR}/CMSIS/Core/
+        ${cmsis_nn_SOURCE_DIR}/Include
+        ${cmsis_nn_SOURCE_DIR}/
 )
 
